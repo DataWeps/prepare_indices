@@ -38,6 +38,7 @@ elasticseach, index, file and action. Params looks like:
     aliases: 'boolean'    # default false
     create: 'boolean'     # default false
     delete: 'boolean'     # default false
+    }
 ```
 Function you can run by:
 ```ruby
