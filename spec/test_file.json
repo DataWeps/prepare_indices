@@ -1,0 +1,11 @@
+{
+  "muj": {
+    "mappings" : {
+        "type1" : {
+            "properties" : {
+                "field1" : { "type" : "text" }
+            }
+        }
+    }
+  }
+}

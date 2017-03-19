@@ -27,6 +27,7 @@ Or install it yourself as:
 
 Main function of gem is start and it take 1 parameter like hash where you define
 elasticseach, index, file and action. Params looks like:
+```ruby
   params = {
     es: 'object'          # compalsory object of elasticsearch
     file: 'string',       # compalsory path to file with index
@@ -37,9 +38,11 @@ elasticseach, index, file and action. Params looks like:
     aliases: 'boolean'    # default false
     create: 'boolean'     # default false
     delete: 'boolean'     # default false
-
+```
 Function you can run by:
+```ruby
   PrepareIndices::Base.start(params)
+```
 
 ## Development
 
