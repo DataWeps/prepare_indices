@@ -84,7 +84,7 @@ module PrepareIndices
       end
 
       def merge_err!(err_1, err_2)
-        err_1.merge!(err_2) if err_2.class == Hash
+        err_1.merge!(err_2) if err_2.is_a?(Hash)
       end
     end
   end
