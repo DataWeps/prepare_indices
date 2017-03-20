@@ -43,7 +43,7 @@ module PrepareIndices
         err = {}
 
         response = Requests.delete_index(es: client, index: index) if params[:delete]
-        err = merge_err(err, response) if response.class == Hash
+        merge_err!(err, response) unless response[:errors].nil?
         index = Requests.create_index(
           es: client,
           index: index,
@@ -66,16 +66,17 @@ module PrepareIndices
           index: index,
           aliases: mapping[:aliases].keys.to_a) if params[:aliases]
         err = merge_err(err, response) if response.class == Hash
+        # TADY
         if err["errors"]
-          { errors: err, index: index}
+          { status: :error, errors: err, index: index }
         else
-          index
+          { status: :ok, index: index }
         end
       end
 
-      def merge_err(err_1, err_2)
-        err_1
-        err_1.merge(err_2) if err_2.class == Hash
+      # TADY
+      def merge_err!(err_1, err_2)
+        err_1.merge!(err_2) if err_2.class == Hash
       end
     end
   end

@@ -19,9 +19,10 @@ module PrepareIndices
           index: index,
           type: type,
           body: settings)
-        true
+        # TADT
+        { errors: nil }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { 'errors' => true, 'setting_error' => error }
+        { errors: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
         { 'errors' => true, 'setting_error' => error }
       end
@@ -32,7 +33,7 @@ module PrepareIndices
           index: index,
           type: type,
           body: mappings)
-        true
+        { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
         { 'errors' => true, 'mapping_error' => error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
