@@ -9,8 +9,8 @@ module PrepareIndices
         { mappings: open[index]['mappings'],
           settings: open[index]['settings'],
           aliases: open[index]['aliases'] || {} }
-      rescue Errno::ENOENT
-        nil
+      rescue Errno::ENOENT => error
+        { errors: true, load_error: error }
       end
 
       def put_settings(es:, settings:, index:, type:)
@@ -19,11 +19,11 @@ module PrepareIndices
           index: index,
           type: type,
           body: settings)
-        true
+        { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { 'errors' => true, 'setting_error' => error }
+        { errors: true, settings_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
-        { 'errors' => true, 'setting_error' => error }
+        { errors: true, settings_error: error }
       end
 
       def put_mappings(es:, mappings:, index:, type:)
@@ -32,21 +32,21 @@ module PrepareIndices
           index: index,
           type: type,
           body: mappings)
-        true
+        { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { 'errors' => true, 'mapping_error' => error }
+        { errors: true, mappings_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
-        { 'errors' => true, 'mapping_error' => error }
+        { errors: true, mappings_error: error }
       end
 
       def create_index(es:, index:, settings:)
         index_name = "#{index}_#{Time.now.strftime('%Y%m%d%H%M%S')}"
         es.indices.create(index: index_name, body: settings)
-        index_name
+        { errors: false , index: index_name}
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { 'errors' => true, 'create_error' => error }
+        { errors: true, create_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
-        { 'errors' => true, 'create_error' => error }
+        { errors: true, create_error: error }
       end
 
       def put_aliases(es:, index:, aliases:)
@@ -55,20 +55,20 @@ module PrepareIndices
           index: index,
           name: a)
         end
-        true
+        { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { 'errors' => true, 'alias_error' => error }
+        { errors: true, aliases_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
-        { 'errors' => true, 'alias_error' => error }
+        { errors: true, aliases_error: error }
       end
 
       def delete_index(es:, index:)
-        es.indices.delete(index: index)
-        true
+        es.indices.delete(index: index) #if es.indices.exists?(index: index)
+        { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { 'errors' => true, 'delete_error' => error }
+        { errors: true, delete_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
-        { 'errors' => true, 'delete_error' => error }
+        { errors: true, delete_error: error }
       end
     end
   end

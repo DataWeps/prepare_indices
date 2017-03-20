@@ -12,8 +12,8 @@ module PrepareIndices
       #   file: 'string',       # compalsory path to file with index
       #   index: 'string',      # compalsory name of index
       #   type: 'string'        # compalsory name of type
-      #   mapping: 'boolean'    # default false
-      #   setting: 'boolean'    # default false
+      #   mappings: 'boolean'    # default false
+      #   settings: 'boolean'    # default false
       #   aliases: 'boolean'    # default false
       #   create: 'boolean'     # default false
       #   delete: 'boolean'     # default false
@@ -29,7 +29,7 @@ module PrepareIndices
         [:es, :file, :index, :type].each do |p|
           raise ArgumentError, 'Missing params key' unless params.key?(p)
         end
-        [:mapping, :setting, :aliases, :create, :delete].each do |p|
+        [:mappings, :settings, :aliases, :create, :delete].each do |p|
           params[p] = false unless params.has_key?(p)
         end
         params
@@ -41,41 +41,50 @@ module PrepareIndices
         mapping = Requests.load_mappings(file: params[:file], index: index)
         index_type = params[:type]
         err = {}
-
-        response = Requests.delete_index(es: client, index: index) if params[:delete]
-        err = merge_err(err, response) if response.class == Hash
-        index = Requests.create_index(
-          es: client,
-          index: index,
-          settings: mapping[:settings]) if params[:create]
-        err = merge_err(err, index) if index.class == Hash
-        response = Requests.put_settings(
-          es: client,
-          settings: mapping[:settings],
-          index: index,
-          type: index_type) if params[:setting] && !params[:create]
-        err = merge_err(err, response) if response.class == Hash
-        response = Requests.put_mappings(
-          es: client,
-          mappings: mapping[:mappings],
-          index: index,
-          type: index_type) if params[:mapping]
-        err = merge_err(err, response) if response.class == Hash
-        response = Requests.put_aliases(
-          es: client,
-          index: index,
-          aliases: mapping[:aliases].keys.to_a) if params[:aliases]
-        err = merge_err(err, response) if response.class == Hash
-        if err["errors"]
-          { errors: err, index: index}
+        if params[:delete]
+          response = Requests.delete_index(es: client, index: index)
+          merge_err!(err, response) if response[:errors]
+        end
+        if params[:create]
+          response = Requests.create_index(
+            es: client,
+            index: index,
+            settings: mapping[:settings])
+          merge_err!(err, response) if response[:errors]
+          index = response[:index]
+        end
+        if params[:settings] && !params[:create]
+          response = Requests.put_settings(
+            es: client,
+            settings: mapping[:settings],
+            index: index,
+          type: index_type)
+          merge_err!(err, response) if response[:errors]
+        end
+        if params[:mappings]
+          response = Requests.put_mappings(
+            es: client,
+            mappings: mapping[:mappings],
+            index: index,
+            type: index_type)
+          merge_err!(err, response) if response[:errors]
+        end
+        if params[:aliases]
+          response = Requests.put_aliases(
+            es: client,
+            index: index,
+            aliases: mapping[:aliases].keys.to_a)
+        merge_err!(err, response) if response[:errors]
+        end
+        if err[:errors]
+          { status: :error, errors: err, index: index }
         else
-          index
+          { status: :ok, index: index }
         end
       end
 
-      def merge_err(err_1, err_2)
-        err_1
-        err_1.merge(err_2) if err_2.class == Hash
+      def merge_err!(err_1, err_2)
+        err_1.merge!(err_2) if err_2.class == Hash
       end
     end
   end

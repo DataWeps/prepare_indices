@@ -25,17 +25,17 @@ describe 'PrepareIndices' do
       let(:response) { PrepareIndices::Base.check_params(error_params) }
 
       it 'should has raise exception' do
-        expect(response).to raise_error(ArgumentError)
+        expect{response}.to raise_error("Missing params key")
       end
     end
   end
 
   context 'perform' do
-    context 'raise error' do
+    context 'raise error with wrong params' do
       let(:response) { PrepareIndices::Base.perform() }
 
       it 'should has raise exception' do
-        expect(response).to raise_error(ArgumentError)
+        expect{response}.to raise_error("Missing params key")
       end
     end
   end

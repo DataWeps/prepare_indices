@@ -33,8 +33,8 @@ elasticseach, index, file and action. Params looks like:
     file: 'string',       # compalsory path to file with index
     index: 'string',      # compalsory name of index
     type: 'string'        # compalsory name of type
-    mapping: 'boolean'    # default false
-    setting: 'boolean'    # default false
+    mappings: 'boolean'    # default false
+    settings: 'boolean'    # default false
     aliases: 'boolean'    # default false
     create: 'boolean'     # default false
     delete: 'boolean'     # default false

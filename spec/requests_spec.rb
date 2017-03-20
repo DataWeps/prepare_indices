@@ -36,7 +36,9 @@ describe 'Requests' do
         es: es, index: 'pokus', settings: {}) }
 
       it 'return true if success' do
-        expect(response).to match(/pokus/)
+        expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(false)
+        expect(response[:index]).to match(/pokus/)
       end
     end
 
@@ -53,6 +55,7 @@ describe 'Requests' do
 
       it 'return hash if not succes' do
         expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(true)
       end
     end
   end
@@ -83,7 +86,8 @@ describe 'Requests' do
           index: 'pokus', type: 'document') }
 
       it 'return true if success' do
-        expect(response).to be(true)
+        expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(false)
       end
     end
 
@@ -113,6 +117,7 @@ describe 'Requests' do
 
       it 'return hash if not success' do
         expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(true)
       end
     end
   end
@@ -130,7 +135,8 @@ describe 'Requests' do
         es: es, index: 'pokus') }
 
       it 'return true if success' do
-        expect(response).to be(true)
+        expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(false)
       end
     end
 
@@ -147,6 +153,7 @@ describe 'Requests' do
 
       it 'return hash if not success' do
         expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(true)
       end
     end
   end
@@ -164,7 +171,8 @@ describe 'Requests' do
         es: es, settings: {"settings" => 'test'}, index: 'pokus', type: 'document') }
 
       it 'return true if success' do
-        expect(response).to be(true)
+        expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(false)
       end
     end
 
@@ -181,6 +189,7 @@ describe 'Requests' do
 
       it 'return hash if not success' do
         expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(true)
       end
     end
   end
@@ -198,7 +207,8 @@ describe 'Requests' do
         es: es, index: 'pokus', aliases: ['pokus1', 'pokus2', 'pokus3']) }
 
       it 'return true if success' do
-        expect(response).to be(true)
+        expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(false)
       end
     end
 
@@ -215,6 +225,7 @@ describe 'Requests' do
 
       it 'return hash if not success' do
         expect(response.class).to be(Hash)
+        expect(response[:errors]).to be(true)
       end
     end
   end

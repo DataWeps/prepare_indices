@@ -13,8 +13,8 @@ def params_miss_del
   file: 'string',
   index: 'string',
   type: 'string',
-  mapping: true,
-  setting: false,
+  mappings: true,
+  settings: false,
   aliases: false,
   create: false
 }
@@ -26,8 +26,8 @@ def all_params
   file: 'string',
   index: 'string',
   type: 'string',
-  mapping: true,
-  setting: false,
+  mappings: true,
+  settings: false,
   aliases: false,
   create: false,
   delete: false
@@ -39,8 +39,8 @@ def error_params
   file: 'string',
   index: 'string',
   type: 'string',
-  mapping: true,
-  setting: false,
+  mappings: true,
+  settings: false,
   aliases: false,
   create: false,
   delete: false
