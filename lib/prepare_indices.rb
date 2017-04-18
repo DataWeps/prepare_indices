@@ -30,7 +30,7 @@ module PrepareIndices
           raise ArgumentError, 'Missing params key' unless params.key?(p)
         end
         [:mappings, :settings, :aliases, :create, :delete].each do |p|
-          params[p] = false unless params.has_key?(p)
+          params[p] = false unless params.include?(p)
         end
         params
       end
@@ -49,7 +49,8 @@ module PrepareIndices
           response = Requests.create_index(
             es: client,
             index: index,
-            settings: mapping[:settings])
+            settings: mapping[:settings],
+            mappings: mapping[:mappings])
           merge_err!(err, response) if response[:errors]
           index = response[:index]
         end
@@ -61,7 +62,7 @@ module PrepareIndices
           type: index_type)
           merge_err!(err, response) if response[:errors]
         end
-        if params[:mappings]
+        if params[:mappings] && !params[:create]
           response = Requests.put_mappings(
             es: client,
             mappings: mapping[:mappings],
@@ -74,7 +75,7 @@ module PrepareIndices
             es: client,
             index: index,
             aliases: mapping[:aliases].keys.to_a)
-        merge_err!(err, response) if response[:errors]
+          merge_err!(err, response) if response[:errors]
         end
         if err[:errors]
           { status: :error, errors: err, index: index }

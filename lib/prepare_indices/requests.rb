@@ -39,10 +39,14 @@ module PrepareIndices
         { errors: true, mappings_error: error }
       end
 
-      def create_index(es:, index:, settings:)
+      def create_index(es:, index:, settings:, mappings:)
         index_name = "#{index}_#{Time.now.strftime('%Y%m%d%H%M%S')}"
-        es.indices.create(index: index_name, body: settings)
-        { errors: false , index: index_name}
+        es.indices.create(
+          index: index_name,
+          body: {
+            settings: settings,
+            mappings: mappings })
+        { errors: false, index: index_name }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
         { errors: true, create_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
