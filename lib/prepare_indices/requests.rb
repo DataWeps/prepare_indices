@@ -5,7 +5,9 @@ module PrepareIndices
     class << self
       def load_mappings(file:, index:)
         open = JSON.parse(File.read(file))
-        raise ArgumentError, "Index is not in file" unless open[index]
+        raise ArgumentError, "Index #{index} is not in file" if \
+          !open.include?(index) ||
+          !open[index]['mappings']
         { mappings: open[index]['mappings'],
           settings: open[index]['settings'],
           aliases: open[index]['aliases'] || {} }
