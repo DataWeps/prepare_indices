@@ -12,7 +12,7 @@ describe 'RotationIndex' do
   end
 
   def month
-    Time.now.next_month.strftime('%m')
+    Time.now.next_month.strftime('%Y%m')
   end
 
   def ok_response

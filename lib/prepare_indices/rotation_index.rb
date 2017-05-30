@@ -34,7 +34,7 @@ module PrepareIndices
     private
 
       def rotate_month(es, params, mapping)
-        next_month = @time.next_month.strftime('%m')
+        next_month = @time.next_month.strftime('%Y%m')
         alias_name = create_alias_name(params[:base_index], next_month)
         raise(StandardError, "exists alias index #{alias_name}") if
           es.indices.exists?(index: alias_name) ||
