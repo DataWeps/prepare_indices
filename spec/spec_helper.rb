@@ -1,7 +1,7 @@
 # encoding:utf-8
-$: << File.join(__dir__, '..', 'lib')
+$LOAD_PATH << File.join(__dir__, '..', 'lib')
 require 'prepare_indices'
-
+require 'pry'
 
 def ini_es(host)
   Elasticsearch::Client.new(host: host, log: true)

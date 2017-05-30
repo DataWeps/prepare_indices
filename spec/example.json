@@ -1,55 +1,58 @@
 {
-    "muj_20170319200958" : {
-        "settings": {
-            "index": {
-                "number_of_shards": 1,
-                "number_of_replicas": 0,
-                "routing.allocation.include.name": "node-1"
-            },
-            "analysis": {
-                "filter": {
-                  "ngram": {
-                    "type": "nGram",
-                    "min_gram": 3,
-                    "max_gram": 25
-                  }
-                },
-                "analyzer": {
-                  "ngram": {
-                    "tokenizer": "whitespace",
-                    "filter": ["lowercase", "stop", "ngram"],
-                    "type": "custom"
-                  },
-                  "ngram_search": {
-                    "tokenizer": "whitespace",
-                    "filter": ["lowercase", "stop"],
-                    "type": "custom"
-                  }
-                }
-            }
+  "base": {
+    "settings": {
+      "analysis": {
+        "filter": {
+          "ngram": {
+            "type": "nGram",
+            "min_gram": 3,
+            "max_gram": 25
+          }
         },
-        "mappings": {
-          "document": {
-            "properties": {
+        "analyzer": {
+          "ngram": {
+            "tokenizer": "whitespace",
+            "filter": [
+              "lowercase",
+              "stop",
+              "ngram"
+            ],
+            "type": "custom"
+          },
+          "ngram_search": {
+            "tokenizer": "whitespace",
+            "filter": [
+              "lowercase",
+              "stop"
+            ],
+            "type": "custom"
+          }
+        }
+      }
+    },
+    "mappings": {
+      "document": {
+        "properties": {
+          "title": {
+            "type": "multi_field",
+            "fields": {
               "title": {
-                "type": "multi_field",
-                "fields": {
-                    "title":  { "type": "string" },
-                    "exact":  { "type": "string"},
-                    "ngram":  { "type": "string"}
-                }
+                "type": "string"
+              },
+              "exact": {
+                "type": "string"
+              },
+              "ngram": {
+                "type": "string"
               }
             }
           }
-        },
-        "aliases" : {
-            "alias_1" : {},
-            "alias_2" : {
-                "filter" : {
-                    "term" : {"user" : "kimchy" }
-                },
-                "routing" : "kimchy"
-            }
         }
+      }
+    },
+    "aliases": {
+      "alias_1": {},
+      "alias_2": {}
     }
+  }
 }

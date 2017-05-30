@@ -9,9 +9,9 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Ondrejkova"]
   spec.email         = ["408256@mail.muni.cz"]
 
-  spec.summary       = %q{Gem for prepare indices from elasticsearch}
-  spec.description   = %q{Gem for prepare indices (delete, create, update) from
-    elasticsearch.}
+  spec.summary       = %q(Gem for prepare indices from elasticsearch)
+  spec.description   = %q(Gem for prepare indices (delete, create, update) from
+    elasticsearch.)
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -23,9 +23,10 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'elasticsearch'
-  spec.add_development_dependency "bundler", "~> 1.14"
+  spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.5"
+  spec.add_development_dependency "activesupport", '< 5'
   spec.add_development_dependency "pry"
   spec.add_development_dependency 'webmock'
 end
