@@ -3,9 +3,11 @@ module PrepareIndices
   module CreateIndices
     class << self
       def perform(params)
-        PrepareIndices::Base.check_params(params)
+        check_params!(params)
         start(params)
       end
+
+    private
 
       def start(params)
         client = params[:es]
@@ -54,6 +56,16 @@ module PrepareIndices
         else
           { status: :ok, index: index }
         end
+      end
+
+      def check_params!(params)
+        [:es, :file, :index, :type].each do |key|
+          raise(ArgumentError, "Missing params key #{key}") unless params.key?(key)
+        end
+        [:mappings, :settings, :aliases, :create, :delete].each do |key|
+          params[key] = false unless params.include?(key)
+        end
+        params
       end
     end
   end

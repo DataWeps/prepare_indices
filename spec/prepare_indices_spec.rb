@@ -4,7 +4,7 @@ require 'webmock/rspec'
 describe 'PrepareIndices' do
   context 'check_params' do
     context 'not error with all params' do
-      let(:response) { PrepareIndices::Base.check_params(all_params) }
+      let(:response) { PrepareIndices::CreateIndices.send(:check_params!, all_params) }
 
       it 'should not raise exception' do
         expect(response).to eq(all_params)
@@ -12,7 +12,7 @@ describe 'PrepareIndices' do
     end
 
     context 'not error with some params' do
-      let(:response) { PrepareIndices::Base.check_params(params_miss_del) }
+      let(:response) { PrepareIndices::CreateIndices.send(:check_params!, params_miss_del) }
 
       it 'should not raise exception' do
         params = params_miss_del
@@ -22,10 +22,10 @@ describe 'PrepareIndices' do
     end
 
     context 'raise error' do
-      let(:response) { PrepareIndices::Base.check_params(error_params) }
+      let(:response) { PrepareIndices::CreateIndices.send(:check_params!, error_params) }
 
       it 'should has raise exception' do
-        expect { response }.to raise_error("Missing params key")
+        expect { response }.to raise_error(/Missing params key/)
       end
     end
   end
@@ -35,7 +35,7 @@ describe 'PrepareIndices' do
       let(:response) { PrepareIndices::CreateIndices.perform({}) }
 
       it 'should has raise exception' do
-        expect { response }.to raise_error("Missing params key")
+        expect { response }.to raise_error(/Missing params key/)
       end
     end
   end

@@ -26,17 +26,6 @@ module PrepareIndices
       #   delete: 'boolean'     # default false
       # }
       #
-
-      def check_params(params)
-        [:es, :file, :index, :type].each do |p|
-          raise ArgumentError, 'Missing params key' unless params.key?(p)
-        end
-        [:mappings, :settings, :aliases, :create, :delete].each do |p|
-          params[p] = false unless params.include?(p)
-        end
-        params
-      end
-
       def merge_errors!(err1, err2)
         return unless err2.include?(:errors)
         err1.merge!(err2) if err2.is_a?(Hash)
