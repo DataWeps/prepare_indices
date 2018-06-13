@@ -15,8 +15,9 @@ module PrepareIndices
         { errors: true, load_error: error }
       end
 
-      def put_settings(es:, settings:, index:, type:)
+      def put_settings(es:, settings:, index:, type:, close_index: false)
         return if settings.empty?
+        es.indices.close(index: index) if close_index
         es.indices.put_settings(
           index: index,
           type: type,
@@ -26,6 +27,8 @@ module PrepareIndices
         { errors: true, settings_error: error }
       rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
         { errors: true, settings_error: error }
+      ensure
+        es.indices.open(index: index) if close_index
       end
 
       def put_mappings(es:, mappings:, index:, type:)

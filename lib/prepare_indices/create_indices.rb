@@ -31,6 +31,7 @@ module PrepareIndices
         if params[:settings] && !params[:create]
           response = Requests.put_settings(
             es: client,
+            close_index: params[:close_index],
             settings: mapping[:settings],
             index: index,
           type: index_type)

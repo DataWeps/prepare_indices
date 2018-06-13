@@ -21,6 +21,7 @@ module PrepareIndices
       #   type: 'string'        # compalsory name of type
       #   mappings: 'boolean'    # default false
       #   settings: 'boolean'    # default false
+      #   close: 'boolean'
       #   aliases: 'boolean'    # default false
       #   create: 'boolean'     # default false
       #   delete: 'boolean'     # default false
