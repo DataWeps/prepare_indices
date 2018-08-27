@@ -12,7 +12,7 @@ module PrepareIndices
       def start(params)
         client = params[:es]
         index = params[:index]
-        mapping = Requests.load_mappings(file: params[:file], index: index)
+        mapping = Requests.load_mappings(file: params[:file], index: params[:name] || index)
         index_type = params[:type]
         err = {}
         if params[:delete]
@@ -23,7 +23,7 @@ module PrepareIndices
           response = Requests.create_index(
             es: client,
             index: index,
-            settings: mapping[:settings],
+            settings: mapping[:settings] || {},
             mappings: mapping[:mappings])
           Base.merge_errors!(err, response)
           index = response[:index]
@@ -32,7 +32,7 @@ module PrepareIndices
           response = Requests.put_settings(
             es: client,
             close_index: params[:close_index],
-            settings: mapping[:settings],
+            settings: mapping[:settings] || {},
             index: index,
           type: index_type)
           Base.merge_errors!(err, response)
