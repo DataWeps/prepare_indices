@@ -19,6 +19,7 @@ module PrepareIndices
       #   file: 'string',       # compalsory path to file with index
       #   index: 'string',      # compalsory name of index
       #   type: 'string'        # compalsory name of type
+      #   force_index: null     # force indices to update
       #   mappings: 'boolean'    # default false
       #   settings: 'boolean'    # default false
       #   close: 'boolean'

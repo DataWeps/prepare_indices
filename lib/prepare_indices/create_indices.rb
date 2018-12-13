@@ -12,6 +12,7 @@ module PrepareIndices
       def start(params)
         client = params[:es]
         index = params[:index]
+        index_for_update = params[:force_index] || params[:index]
         mapping = Requests.load_mappings(file: params[:file], index: params[:name] || index)
         index_type = params[:type]
         err = {}
@@ -22,18 +23,18 @@ module PrepareIndices
         if params[:create]
           response = Requests.create_index(
             es: client,
-            index: index,
+            index: index_for_update,
             settings: mapping[:settings] || {},
             mappings: mapping[:mappings])
           Base.merge_errors!(err, response)
-          index = response[:index]
+          index_for_update = response[:index]
         end
         if params[:settings] && !params[:create]
           response = Requests.put_settings(
             es: client,
             close_index: params[:close_index],
             settings: mapping[:settings] || {},
-            index: index,
+            index: index_for_update,
           type: index_type)
           Base.merge_errors!(err, response)
         end
@@ -41,21 +42,21 @@ module PrepareIndices
           response = Requests.put_mappings(
             es: client,
             mappings: mapping[:mappings],
-            index: index,
+            index: index_for_update,
             type: index_type)
           Base.merge_errors!(err, response)
         end
         if params[:aliases]
           response = Requests.put_aliases(
             es: client,
-            index: index,
+            index: index_for_update,
             aliases: mapping[:aliases].keys.to_a)
           Base.merge_errors!(err, response)
         end
         if err[:errors]
-          { status: :error, errors: err, index: index }
+          { status: :error, errors: err, index: index_for_update }
         else
-          { status: :ok, index: index }
+          { status: :ok, index: index_for_update }
         end
       end
 
