@@ -32,11 +32,7 @@ module PrepareIndices
       end
 
       def put_mappings(es:, mappings:, index:, type:)
-        return if mappings.empty?
-        es.indices.put_mapping(
-          index: index,
-          type: type,
-          body: mappings)
+        es.indices.put_mapping(index: index, type: type, body: mappings[type] || mappings)
         { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
         { errors: true, mappings_error: error }
