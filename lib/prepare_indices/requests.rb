@@ -31,7 +31,8 @@ module PrepareIndices
         es.indices.open(index: index) if close_index
       end
 
-      def put_mappings(es:, mappings:, index:, type:)
+      def put_mappings(es:, mappings:, index:, type:, close_index: false)
+        es.indices.close(index: index) if close_index
         es.indices.put_mapping(index: index, type: type, body: mappings[type] || mappings)
         { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error

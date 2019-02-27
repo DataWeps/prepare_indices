@@ -43,7 +43,8 @@ module PrepareIndices
             es: client,
             mappings: mapping[:mappings],
             index: index_for_update,
-            type: index_type)
+            type: index_type,
+            close_index: params[:close_index])
           Base.merge_errors!(err, response)
         end
         if params[:aliases]
