@@ -25,7 +25,8 @@ namespace :prepare_indices do
       aliases:     ENV['aliases'],
       create:      ENV['create'],
       delete:      ENV['delete'],
-      file:        ENV['file'])
+      file:        ENV['file'],
+      log:         ENV['log'])
 
     PrepareIndices::CreateIndices.perform(params)
   end
