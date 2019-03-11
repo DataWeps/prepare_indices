@@ -5,16 +5,19 @@ namespace :prepare_indices do
     require 'prepare_indices/requests'
     require 'elasticsearch'
     params = {
-        es:    ENV['es'],
-        index: ENV['index'],
-        type:  ENV['type'] }
+      es:    ENV['es'],
+      index: ENV['index'],
+      type:  ENV['type'] }
 
     params.each do |par|
-      raise ArgumentError, "Missing mandatory key: #{par[0]}" if par[1].nil?
+      raise(ArgumentError, "Missing mandatory key: #{par[0]}") if par[1].nil?
     end
+
+    languages = (ENV['languages'] || '').split(';')
 
     params = params.merge(
       force_index: ENV['force_index'],
+      languages:   languages,
       mappings:    ENV['mappings'],
       settings:    ENV['settings'],
       close:       ENV['close'],
@@ -22,7 +25,7 @@ namespace :prepare_indices do
       create:      ENV['create'],
       delete:      ENV['delete'],
       file:        ENV['file'],
-      log:         ENV['log'])
+      log:         ENV['log'] || 'no')
 
     PrepareIndices::CreateIndices.perform(params)
   end
