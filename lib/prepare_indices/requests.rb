@@ -3,18 +3,6 @@ require 'json'
 module PrepareIndices
   module Requests
     class << self
-      def load_mappings(file:, index:)
-        open = JSON.parse(File.read(file))
-        raise ArgumentError, "Index #{index} is not in file" if \
-          !open.include?(index) ||
-          !open[index]['mappings']
-        { mappings: open[index]['mappings'],
-          settings: open[index]['settings'],
-          aliases: open[index]['aliases'] || {} }
-      rescue Errno::ENOENT => error
-        { errors: true, load_error: error }
-      end
-
       def put_settings(es:, settings:, index:, type:, close_index: false)
         return if settings.empty?
         es.indices.close(index: index) if close_index

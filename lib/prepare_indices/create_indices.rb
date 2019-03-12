@@ -11,15 +11,28 @@ module PrepareIndices
     private
 
       def start(params)
-        client = Elasticsearch::Client.new(
-          host: params[:es],
-          log:  params[:log] =~ /(true|yes|y|1|ano)/ ? true : false)
-        index = params[:index]
-        index_for_update = params[:force_index] || params[:index]
+        client = Elasticsearch::Client.new({
+          host:   params[:es],
+          log:    params[:log] =~ /(true|yes|y|1|ano)/ ? true : false }.merge(
+            params.include?(:logger) ? params[:logger] : {}))
+        index                = params[:index]
+        index_for_update     = params[:force_index] || params[:index]
+        params[:languages] ||= []
+        params[:time]        = params[:time].to_sym if params[:time].present?
+        params[:languages]   = %w[base] if params[:languages].blank?
+
         mapping = Mappings.load_mappings(
-          file: params[:file],
-          index: params[:name] || index,
+          file:      params[:file],
+          index:     params[:name] || index,
           languages: params[:languages])
+
+        params[:languages].each_with_object({}) do |language, mem|
+          mem[language] =
+            build(client, params, index_for_update, mapping[language], language)
+        end
+      end
+
+      def build(client, params, index_for_update, mapping, language)
         index_type = params[:type]
         err = {}
         if params[:delete]
@@ -61,9 +74,9 @@ module PrepareIndices
           Base.merge_errors!(err, response)
         end
         if err[:errors]
-          { status: :error, errors: err, index: index_for_update }
+          { status: :error, errors: err, index: index_for_update, language: language }
         else
-          { status: :ok, index: index_for_update }
+          { status: :ok, index: index_for_update, language: language }
         end
       end
 

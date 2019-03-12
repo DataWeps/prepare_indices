@@ -25,8 +25,11 @@ namespace :prepare_indices do
       create:      ENV['create'],
       delete:      ENV['delete'],
       file:        ENV['file'],
+      time:        ENV['time'] || :this_month,
       log:         ENV['log'] || 'no')
 
-    PrepareIndices::CreateIndices.perform(params)
+    response = PrepareIndices::CreateIndices.perform(params)
+    puts response
+    response
   end
 end
