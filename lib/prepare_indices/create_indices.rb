@@ -26,6 +26,8 @@ module PrepareIndices
           index:     params[:name] || index,
           languages: params[:languages])
 
+        return mapping if mapping.include?(:errors)
+
         params[:languages].each_with_object({}) do |language, mem|
           mem[language] =
             build(client, params, index_for_update, mapping[language], language)

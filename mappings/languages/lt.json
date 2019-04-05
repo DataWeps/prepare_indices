@@ -1,0 +1,59 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "lt": {
+              "type": "text",
+              "analyzer": "lithuanian"
+            },
+            "lt_case_sensitive": {
+              "type": "text",
+              "analyzer": "lithuanian_case_sensitive"
+            }
+          },
+          "analyzer": "lithuanian"
+        },
+        "content": {
+          "fields": {
+            "lt": {
+              "type": "text",
+              "analyzer": "lithuanian"
+            },
+            "lt_case_sensitive": {
+              "type": "text",
+              "analyzer": "lithuanian_case_sensitive"
+            }
+          },
+          "analyzer": "lithuanian"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "lithuanian_stop": {
+            "type": "stop",
+            "stopwords": "_lithuanian_"
+          },
+          "lithuanian_stemmer": {
+            "type": "stemmer",
+            "language": "lithuanian"
+          }
+        },
+        "analyzer": {
+          "lithuanian_case_sensitive": {
+            "filter": [
+              "lithuanian_stop",
+              "lithuanian_stemmer"
+            ],
+            "tokenizer": "standard"
+          }
+        }
+      }
+    }
+  }
+}

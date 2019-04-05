@@ -1,0 +1,35 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "pl": {
+              "type": "text",
+              "analyzer": "polish"
+            },
+            "pl_case_sensitive": {
+              "type": "text",
+              "analyzer": "polish"
+            }
+          },
+          "analyzer": "polish"
+        },
+        "content": {
+          "fields": {
+            "pl": {
+              "type": "text",
+              "analyzer": "polish"
+            },
+            "pl_case_sensitive": {
+              "type": "text",
+              "analyzer": "polish"
+            }
+          },
+          "analyzer": "polish"
+        }
+      }
+    }
+  },
+  "settings": {}
+}

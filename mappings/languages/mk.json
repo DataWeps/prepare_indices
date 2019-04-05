@@ -1,0 +1,61 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "mk": {
+              "type": "text",
+              "analyzer": "macedonian_lowercase"
+            },
+            "mk_case_sensitive": {
+              "type": "text",
+              "analyzer": "macedonian_case_sensitive"
+            }
+          },
+          "analyzer": "macedonian_lowercase"
+        },
+        "content": {
+          "fields": {
+            "mk": {
+              "type": "text",
+              "analyzer": "macedonian_lowercase"
+            },
+            "mk_case_sensitive": {
+              "type": "text",
+              "analyzer": "macedonian_case_sensitive"
+            }
+          },
+          "analyzer": "macedonian_lowercase"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "macedonian_lemmagen": {
+            "type": "lemmagen",
+            "lexicon": "mk"
+          }
+        },
+        "analyzer": {
+          "macedonian_case_sensitive": {
+            "tokenizer": "standard",
+            "filter": [
+              "macedonian_lemmagen"
+            ]
+          },
+          "macedonian_lowercase": {
+            "tokenizer": "standard",
+            "filter": [
+              "macedonian_lemmagen",
+              "lowercase"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

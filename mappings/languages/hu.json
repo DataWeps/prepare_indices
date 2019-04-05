@@ -1,0 +1,59 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "hu": {
+              "type": "text",
+              "analyzer": "hungarian"
+            },
+            "hu_case_sensitive": {
+              "type": "text",
+              "analyzer": "hungarian_case_sensitive"
+            }
+          },
+          "analyzer": "hungarian"
+        },
+        "content": {
+          "fields": {
+            "hu": {
+              "type": "text",
+              "analyzer": "hungarian"
+            },
+            "hu_case_sensitive": {
+              "type": "text",
+              "analyzer": "hungarian_case_sensitive"
+            }
+          },
+          "analyzer": "hungarian"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "hungarian_stop": {
+            "type": "stop",
+            "stopwords": "_hungarian_"
+          },
+          "hungarian_stemmer": {
+            "type": "stemmer",
+            "language": "hungarian"
+          }
+        },
+        "analyzer": {
+          "hungarian_case_sensitive": {
+            "tokenizer": "standard",
+            "filter": [
+              "hungarian_stop",
+              "hungarian_stemmer"
+            ]
+          }
+        }
+      }
+    }
+  }
+}
