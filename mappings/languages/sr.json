@@ -6,27 +6,27 @@
           "fields": {
             "sr": {
               "type": "text",
-              "analyzer": "serbian_lowercase"
+              "analyzer": "serbian"
             },
             "sr_case_sensitive": {
               "type": "text",
               "analyzer": "serbian_case_sensitive"
             }
           },
-          "analyzer": "serbian_lowercase"
+          "analyzer": "serbian"
         },
         "content": {
           "fields": {
             "sr": {
               "type": "text",
-              "analyzer": "serbian_lowercase"
+              "analyzer": "serbian"
             },
             "sr_case_sensitive": {
               "type": "text",
               "analyzer": "serbian_case_sensitive"
             }
           },
-          "analyzer": "serbian_lowercase"
+          "analyzer": "serbian"
         }
       }
     }
@@ -47,7 +47,7 @@
               "serbian_lemmagen"
             ]
           },
-          "serbian_lowercase": {
+          "serbian": {
             "tokenizer": "standard",
             "filter": [
               "serbian_lemmagen",

@@ -1,5 +1,5 @@
 require 'prepare_indices/mappings'
-
+require 'pry'
 module PrepareIndices
   module CreateIndices
     class << self
@@ -11,26 +11,30 @@ module PrepareIndices
     private
 
       def start(params)
-        client = Elasticsearch::Client.new({
-          host:   params[:es],
-          log:    params[:log] =~ /(true|yes|y|1|ano)/ ? true : false }.merge(
-            params.include?(:logger) ? params[:logger] : {}))
+        # require 'pry'
+        # binding.pry
+        client = Elasticsearch::Client.new(params[:connect].merge(
+          params.include?(:logger) ? { logger: params[:logger] } : {}))
         index                = params[:index]
         index_for_update     = params[:force_index] || params[:index]
         params[:languages] ||= []
-        params[:time]        = params[:time].to_sym if params[:time].present?
         params[:languages]   = %w[base] if params[:languages].blank?
 
         mapping = Mappings.load_mappings(
           file:      params[:file],
           index:     params[:name] || index,
-          languages: params[:languages])
+          languages: params[:languages],
+          base_file: params[:base_file],
+          time:      params[:time],
+          merge:     params[:merge])
 
         return mapping if mapping.include?(:errors)
 
+        binding.pry
+
         params[:languages].each_with_object({}) do |language, mem|
-          mem[language] =
-            build(client, params, index_for_update, mapping[language], language)
+          # mem[language] =
+          #   build(client, params, index_for_update, mapping[language], language)
         end
       end
 
@@ -83,12 +87,22 @@ module PrepareIndices
       end
 
       def check_params!(params)
-        [:es, :file, :index, :type].each do |key|
+        %i[connect index].each do |key|
           raise(ArgumentError, "Missing params key #{key}") unless params.key?(key)
         end
-        [:mappings, :settings, :aliases, :create, :delete].each do |key|
+        %i[mappings settings aliases create delete].each do |key|
           params[key] = false unless params.include?(key)
         end
+        %i[base_file].each do |key|
+          params[key] = true unless params.include?(key)
+        end
+        %i[log base_file mappings settings force_index
+           close aliases create delete].each do |key|
+          params[key] = \
+            params.include?(key) && params[key].to_s =~ /true|yes|y|1|ano/ ? true : false
+        end
+        params[:languages].uniq!
+        params[:time] = params[:time].to_sym if params.include?(:time)
         params
       end
     end

@@ -3,13 +3,15 @@
     "document": {
       "properties": {
         "title": {
-          "es": {
-            "type": "text",
-            "analyzer": "spanish"
-          },
-          "es_case_sensitive": {
-            "type": "text",
-            "analyzer": "spanish_case_sensitive"
+          "fields": {
+            "es": {
+              "type": "text",
+              "analyzer": "spanish"
+            },
+            "es_case_sensitive": {
+              "type": "text",
+              "analyzer": "spanish_case_sensitive"
+            }
           },
           "analyzer": "spanish"
         },

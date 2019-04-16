@@ -44,10 +44,9 @@ module PrepareIndices
       end
 
       def put_aliases(es:, index:, aliases:)
+        { errors: false } if index.blank?
         aliases.each do |a|
-          es.indices.put_alias(
-          index: index,
-          name: a)
+          es.indices.put_alias(index: index, name: a)
         end
         { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error

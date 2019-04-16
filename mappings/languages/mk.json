@@ -6,27 +6,27 @@
           "fields": {
             "mk": {
               "type": "text",
-              "analyzer": "macedonian_lowercase"
+              "analyzer": "macedonian"
             },
             "mk_case_sensitive": {
               "type": "text",
               "analyzer": "macedonian_case_sensitive"
             }
           },
-          "analyzer": "macedonian_lowercase"
+          "analyzer": "macedonian"
         },
         "content": {
           "fields": {
             "mk": {
               "type": "text",
-              "analyzer": "macedonian_lowercase"
+              "analyzer": "macedonian"
             },
             "mk_case_sensitive": {
               "type": "text",
               "analyzer": "macedonian_case_sensitive"
             }
           },
-          "analyzer": "macedonian_lowercase"
+          "analyzer": "macedonian"
         }
       }
     }
@@ -47,7 +47,7 @@
               "macedonian_lemmagen"
             ]
           },
-          "macedonian_lowercase": {
+          "macedonian": {
             "tokenizer": "standard",
             "filter": [
               "macedonian_lemmagen",
