@@ -38,6 +38,13 @@ module PrepareIndices
         { errors: true, load_error: error }
       end
 
+      def what_time(what_time)
+        time_to_calculate = Time.now
+        time_to_calculate = time_to_calculate.months_since(1) if what_time == :next_month
+        time_to_calculate = time_to_calculate.months_since(2) if what_time == :next_next_month
+        time_to_calculate.strftime('%Y%m')
+      end
+
     private
 
       def load_base_data(index, base_file)
@@ -102,13 +109,6 @@ module PrepareIndices
         data = data.gsub("%language%", LANGUAGES[language][:language])
         data = data.gsub("%country%", LANGUAGES[language][:country])
         Oj.load(data)
-      end
-
-      def what_time(what_time)
-        time_to_calculate = Time.now
-        time_to_calculate = time_to_calculate.months_since(1) if what_time == :next_month
-        time_to_calculate = time_to_calculate.months_since(2) if what_time == :next_next_month
-        time_to_calculate.strftime('%Y%m')
       end
 
       def find_languages(index, languages)

@@ -1,6 +1,10 @@
 require 'prepare_indices/mappings'
+require 'prepare_indices/requests'
+
 require 'pry'
 module PrepareIndices
+  class CreateIndicesError < StandardError; end
+
   module CreateIndices
     class << self
       def perform(params)
@@ -11,8 +15,8 @@ module PrepareIndices
     private
 
       def start(params)
-        # require 'pry'
-        # binding.pry
+        require 'pry'
+        binding.pry
         client = Elasticsearch::Client.new(params[:connect].merge(
           params.include?(:logger) ? { logger: params[:logger] } : {}))
         index                = params[:index]
@@ -29,12 +33,33 @@ module PrepareIndices
           merge:     params[:merge])
 
         return mapping if mapping.include?(:errors)
+        exists_indices = check_exists_indices(index_for_update, client, params, mapping)
 
-        binding.pry
+        mapping.each_key.each_with_object({}) do |language, mem|
+          mem[language] = \
+            if exists_indices[language]
+              { status: :exists }
+            else
+              build(client, params, index_for_update, mapping[language], language)
+            end
+        end
+      end
 
-        params[:languages].each_with_object({}) do |language, mem|
-          # mem[language] =
-          #   build(client, params, index_for_update, mapping[language], language)
+      def check_exists_indices(index_for_update, client, params, mapping)
+        mapping.keys.each_with_object({}) do |mapping_key, mem|
+          alias_to_check = find_alias_to_check(
+            index_for_update, mapping_key, params, mapping[mapping_key][:aliases])
+          mem[mapping_key] = Requests.exists_index?(es: client, index: alias_to_check)
+        end
+      end
+
+      def find_alias_to_check(index_for_update, mapping_key, params, aliases)
+        if params[:rotation_check] == :date
+          "#{index_for_update}_#{Mappings.what_time(params[:time])}"
+        elsif params[:rotation_check] == :language_date
+          "#{index_for_update}_#{mapping_key}_#{Mappings.what_time(params[:time])}"
+        else
+          index_for_update
         end
       end
 
@@ -52,6 +77,7 @@ module PrepareIndices
             settings: mapping[:settings] || {},
             mappings: mapping[:mappings])
           Base.merge_errors!(err, response)
+          raise(CreateIndicesError, err) unless response[:index]
           index_for_update = response[:index]
         end
         if params[:settings] && !params[:create]
@@ -80,10 +106,12 @@ module PrepareIndices
           Base.merge_errors!(err, response)
         end
         if err[:errors]
-          { status: :error, errors: err, index: index_for_update, language: language }
+          raise(CreateIndicesError)
         else
-          { status: :ok, index: index_for_update, language: language }
+          { status: :created, index: index_for_update, language: language }
         end
+      rescue CreateIndicesError
+        { status: :error, errors: err, index: index_for_update, language: language }
       end
 
       def check_params!(params)

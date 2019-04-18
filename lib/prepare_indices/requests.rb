@@ -1,8 +1,12 @@
 require 'json'
 
 module PrepareIndices
-  module Requests
+  class Requests
     class << self
+      def exists_index?(es:, index:)
+        es.indices.exists_alias?(name: index)
+      end
+
       def put_settings(es:, settings:, index:, type:, close_index: false)
         return if settings.empty?
         es.indices.close(index: index) if close_index
@@ -30,6 +34,7 @@ module PrepareIndices
       end
 
       def create_index(es:, index:, settings:, mappings:)
+        sleep(1)
         index_name = "#{index}_#{Time.now.strftime('%Y%m%d%H%M%S')}"
         es.indices.create(
           index: index_name,

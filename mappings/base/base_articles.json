@@ -22,7 +22,7 @@
           "type": "keyword"
         },
         "id": {
-          "type": "long"
+          "type": "keyword"
         },
         "user_id": {
           "type": "long"

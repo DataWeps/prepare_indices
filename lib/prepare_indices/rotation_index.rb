@@ -41,9 +41,8 @@ module PrepareIndices
 
       def rotate_month(params)
         CreateIndices.perform(params)
-        { ok: true }
       rescue Elasticsearch::Transport::Transport::Errors, StandardError => error
-        { error: error.message }
+        { error: error.message, backtrace: error.backtrace }
       end
 
       def check_params!(params)
@@ -55,11 +54,22 @@ module PrepareIndices
         # raise(ArgumentError, "Unexists file: '#{params}") unless exist_file?(params)
         # raise(ArgumentError, "Missing base index '#{params}'") if missing_base_index?(params)
         # raise(ArgumentError, "Missing type: '#{params}") if missing_type?(params)
+        %i[mappings settings create].each do |key|
+          next if params.include?(key)
+          params[key] = true
+        end
         params[:close]     = false       unless params.include?(:close)
         params[:every]     = :month      unless params.include?(:month)
         params[:aliases]   = true        unless params.include?(:aliases)
-        params[:time]      = :next_month
+        params[:time] = \
+          if params.include?(:rotation) && params[:rotation].include?(:time)
+            params[:rotation][:time].to_sym
+          else
+            :next_month
+          end
         params[:languages] = (params[:languages_write] || [])
+        params[:rotation_check] = \
+          params[:rotation] ? params[:rotation][:check].to_sym : false
         params
       end
 
