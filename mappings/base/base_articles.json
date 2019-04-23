@@ -43,7 +43,7 @@
       "properties": {
         "note": {
           "type": "text",
-          "index": "no"
+          "index": false
         },
         "user_id": {
           "type": "long"
