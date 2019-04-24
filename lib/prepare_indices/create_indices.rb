@@ -12,7 +12,7 @@ module PrepareIndices
       def start(params)
         client = Elasticsearch::Client.new(
           host: params[:es],
-          log: params[:log].match?(/(true|yes|y|1|ano)/) ? true : false)
+          log: params[:log] =~ /(true|yes|y|1|ano)/ ? true : false)
         index = params[:index]
         index_for_update = params[:force_index] || params[:index]
         mapping = Requests.load_mappings(file: params[:file], index: params[:name] || index)
