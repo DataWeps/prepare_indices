@@ -1,51 +1,117 @@
 {
   "mappings": {
-    "tag_mention": {
-      "_parent": {
-        "type": "document"
-      },
-      "_routing": {
-        "required": true
-      },
+    "document": {
       "properties": {
-        "instance_id": {
-          "type": "integer"
+        "content": {
+          "fields": {
+            "asciifolding": {
+              "type": "text",
+              "analyzer": "asciifolding"
+            },
+            "whitespace_exact": {
+              "type": "text",
+              "analyzer": "whitespace_exact"
+            },
+            "whitespace_exact_case_sensitive": {
+              "type": "text",
+              "analyzer": "whitespace_exact_case_sensitive"
+            },
+            "%language%_case_sensitive": {
+              "type": "text",
+              "analyzer": "%country%_case_sensitive"
+            },
+            "%language%": {
+              "type": "text",
+              "analyzer": "%country%"
+            }
+          },
+          "analyzer": "%country%",
+          "type": "text"
         },
-        "name": {
-          "type": "keyword"
+        "title": {
+          "fields": {
+            "asciifolding": {
+              "type": "text",
+              "analyzer": "asciifolding"
+            },
+            "whitespace_exact": {
+              "type": "text",
+              "analyzer": "whitespace_exact"
+            },
+            "whitespace_exact_case_sensitive": {
+              "type": "text",
+              "analyzer": "whitespace_exact_case_sensitive"
+            },
+            "%language%_case_sensitive": {
+              "type": "text",
+              "analyzer": "%country%_case_sensitive"
+            },
+            "%language%": {
+              "type": "text",
+              "analyzer": "%country%"
+            }
+          },
+          "analyzer": "%country%",
+          "type": "text"
         },
-        "id": {
-          "type": "keyword"
+        "search_author": {
+          "properties": {
+            "author": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "author_hash": {
+              "type": "keyword"
+            },
+            "name": {
+              "type": "text",
+              "fields": {
+                "author": {
+                  "type": "text",
+                  "boost": 10,
+                  "analyzer": "simple"
+                },
+                "exact": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
         },
-        "shared": {
-          "type": "boolean"
-        },
-        "tag_for": {
-          "type": "keyword"
-        },
-        "user_id": {
-          "type": "long"
-        },
-        "auto": {
-          "type": "boolean"
-        }
-      }
-    },
-    "note": {
-      "dynamic": "strict",
-      "_parent": {
-        "type": "document"
-      },
-      "_routing": {
-        "required": true
-      },
-      "properties": {
-        "note": {
-          "type": "text",
-          "index": "no"
-        },
-        "user_id": {
-          "type": "long"
+        "tag_mention": {
+          "properties": {
+            "search_id": {
+              "type": "keyword"
+            },
+            "name": {
+              "type": "keyword",
+              "index": false
+            },
+            "id": {
+              "type": "keyword",
+              "index": false
+            },
+            "shared": {
+              "type": "boolean",
+              "index": false
+            },
+            "tag_for": {
+              "type": "keyword",
+              "index": false
+            },
+            "user_id": {
+              "type": "long",
+              "index": false
+            },
+            "auto": {
+              "type": "boolean",
+              "index": false
+            }
+          }
         }
       }
     }
@@ -60,6 +126,12 @@
           }
         },
         "analyzer": {
+          "asciifolding": {
+            "tokenizer": "standard",
+            "filter": [
+              "asciifolding"
+            ]
+          },
           "whitespace_exact": {
             "type": "custom",
             "tokenizer": "whitespace",

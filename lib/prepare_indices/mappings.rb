@@ -2,22 +2,10 @@ require 'json'
 require 'active_support/core_ext/time/calculations'
 require 'active_support/core_ext/object/deep_dup'
 
+require_relative 'prepare_language'
+
 module PrepareIndices
   class Mappings
-    LANGUAGES = {
-      'cs' => { language: 'cs', country: 'czech' },
-      'sk' => { language: 'sk', country: 'czech' },
-      'pl' => { language: 'pl', country: 'polish' },
-      'de' => { language: 'de', country: 'german' },
-      'en' => { language: 'en', country: 'english' },
-      'es' => { language: 'es', country: 'spanish' },
-      'hu' => { language: 'hu', country: 'hungarian' },
-      'lt' => { language: 'lt', country: 'lithuanian' },
-      'lv' => { language: 'lv', country: 'latvian' },
-      'mk' => { language: 'mk', country: 'macedonian' },
-      'ru' => { language: 'ru', country: 'russian' },
-      'sr' => { language: 'sr', country: 'serbian' } }.freeze
-
     class << self
       # time: :this_month|:next_month
       def load_mappings(file:, index:, languages: nil, time: :this_month, base_file: true, merge: false)
@@ -36,13 +24,6 @@ module PrepareIndices
           merge)
       rescue Errno::ENOENT => error
         { errors: true, load_error: error }
-      end
-
-      def what_time(what_time)
-        time_to_calculate = Time.now
-        time_to_calculate = time_to_calculate.months_since(1) if what_time == :next_month
-        time_to_calculate = time_to_calculate.months_since(2) if what_time == :next_next_month
-        time_to_calculate.strftime('%Y%m')
       end
 
     private
@@ -72,6 +53,7 @@ module PrepareIndices
                 key,
                 language,
                 time))
+            PrepareLanguage.prepare!(mem, language, key, time)
           end
         end
         merge ? { base: merge_data(data) } : data
@@ -84,31 +66,7 @@ module PrepareIndices
       end
 
       def build_language(file_data, language_data, key, language, time)
-        data = (file_data[key] || {}).deep_dup.deep_merge(language_data[key] || {})
-        data = prepare_aliases(data, language, time)    if key.to_sym == :aliases
-        data = prepare_language_mapping(data, language) if key.to_sym == :mappings
-        data
-      end
-
-      def prepare_aliases(data, language, time)
-        (data || {}).each_with_object({}) do |(alias_name, _), mem|
-          alias_name = alias_name.sub("%date%", what_time(time))
-          alias_name = \
-            if language == 'base'
-              nil
-            else
-              alias_name.sub("%language%", language)
-            end
-          mem[alias_name] = {} if alias_name
-        end
-      end
-
-      def prepare_language_mapping(data, language)
-        return data if language == 'base'
-        data = Oj.dump(data)
-        data = data.gsub("%language%", LANGUAGES[language][:language])
-        data = data.gsub("%country%", LANGUAGES[language][:country])
-        Oj.load(data)
+        (file_data[key] || {}).deep_dup.deep_merge(language_data[key] || {})
       end
 
       def find_languages(index, languages)

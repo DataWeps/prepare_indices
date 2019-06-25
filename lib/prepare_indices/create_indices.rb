@@ -1,7 +1,8 @@
 require 'prepare_indices/mappings'
 require 'prepare_indices/requests'
 
-require 'pry'
+require 'prepare_indices/what_time'
+
 module PrepareIndices
   class CreateIndicesError < StandardError; end
 
@@ -15,8 +16,6 @@ module PrepareIndices
     private
 
       def start(params)
-        require 'pry'
-        binding.pry
         client = Elasticsearch::Client.new(params[:connect].merge(
           params.include?(:logger) ? { logger: params[:logger] } : {}))
         index                = params[:index]
@@ -33,6 +32,7 @@ module PrepareIndices
           merge:     params[:merge])
 
         return mapping if mapping.include?(:errors)
+
         exists_indices = check_exists_indices(index_for_update, client, params, mapping)
 
         mapping.each_key.each_with_object({}) do |language, mem|
@@ -40,6 +40,7 @@ module PrepareIndices
             if exists_indices[language]
               { status: :exists }
             else
+              binding.pry
               build(client, params, index_for_update, mapping[language], language)
             end
         end
@@ -55,9 +56,9 @@ module PrepareIndices
 
       def find_alias_to_check(index_for_update, mapping_key, params, aliases)
         if params[:rotation_check] == :date
-          "#{index_for_update}_#{Mappings.what_time(params[:time])}"
+          "#{index_for_update}_#{WhatTime.what_time(params[:time])}"
         elsif params[:rotation_check] == :language_date
-          "#{index_for_update}_#{mapping_key}_#{Mappings.what_time(params[:time])}"
+          "#{index_for_update}_#{mapping_key}_#{WhatTime.what_time(params[:time])}"
         else
           index_for_update
         end
