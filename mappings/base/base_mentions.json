@@ -146,6 +146,9 @@
         },
         "resource": {
           "type": "keyword"
+        },
+        "resource_id": {
+          "type": "keyword"
         }
       }
     }
