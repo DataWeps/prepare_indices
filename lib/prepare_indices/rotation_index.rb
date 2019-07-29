@@ -67,7 +67,10 @@ module PrepareIndices
           else
             :next_month
           end
-        params[:languages] = (params[:languages_write] || [])
+        # languages to rotate, take from languages_write if blank
+        params[:languages] = (params[:languages_write] || []) if \
+          params[:languages].blank?
+
         params[:rotation_check] = \
           params[:rotation] ? params[:rotation][:check].to_sym : false
         params

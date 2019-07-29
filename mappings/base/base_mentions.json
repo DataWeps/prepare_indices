@@ -143,6 +143,9 @@
         },
         "source": {
           "type": "keyword"
+        },
+        "resource": {
+          "type": "keyword"
         }
       }
     }

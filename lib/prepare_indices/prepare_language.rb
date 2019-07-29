@@ -44,7 +44,7 @@ module PrepareIndices
         # return data if language == 'base'
         data = Oj.dump(data)
         data = data.gsub("%language%", LANGUAGES[language][:language])
-        data = data.gsub("%country%", LANGUAGES[language][:country])
+        data = data.gsub("%country%",  LANGUAGES[language][:country])
         Oj.load(data)
       end
     end
