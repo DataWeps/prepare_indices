@@ -22,6 +22,7 @@ module PrepareIndices
         index_for_update     = params[:force_index] || params[:index]
         params[:languages] ||= []
         params[:languages]   = %w[base] if params[:languages].blank?
+        params[:languages].concat(params[:languages_write] || [])
 
         mapping = Mappings.load_mappings(
           file:      params[:file],
