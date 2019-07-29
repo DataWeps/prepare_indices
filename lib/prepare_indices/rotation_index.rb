@@ -74,8 +74,7 @@ module PrepareIndices
       end
 
       def missing_base_index?(params)
-        return true if params[:base_index].blank?
-        false
+        params[:base_index].blank? ? true : false
       end
 
       def exist_file?(params)

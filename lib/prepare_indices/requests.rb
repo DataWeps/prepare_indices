@@ -3,8 +3,12 @@ require 'json'
 module PrepareIndices
   class Requests
     class << self
-      def exists_index?(es:, index:)
+      def exists_alias?(es:, index:)
         es.indices.exists_alias?(name: index)
+      end
+
+      def exists_index?(es:, index:)
+        es.indices.exists?(index: index)
       end
 
       def put_settings(es:, settings:, index:, type:, close_index: false)

@@ -112,6 +112,37 @@
               "index": false
             }
           }
+        },
+        "published_at": {
+          "type": "date",
+          "format": "dateOptionalTime"
+        },
+        "saved_at": {
+          "type": "date",
+          "format": "dateOptionalTime"
+        },
+        "updated_at": {
+          "type": "date",
+          "format": "dateOptionalTime"
+        },
+        "author": {
+          "type": "keyword",
+          "index": false
+        },
+        "countries": {
+          "type": "keyword"
+        },
+        "real_countries": {
+          "type": "keyword"
+        },
+        "lang": {
+          "type": "keyword"
+        },
+        "languages": {
+          "type": "keyword"
+        },
+        "source": {
+          "type": "keyword"
         }
       }
     }

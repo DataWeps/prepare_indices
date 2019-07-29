@@ -50,9 +50,7 @@ module PrepareIndices
               build_language(
                 file_data,
                 language_data[language],
-                key,
-                language,
-                time))
+                key))
             PrepareLanguage.prepare!(mem, language, key, time)
           end
         end
@@ -65,7 +63,7 @@ module PrepareIndices
         end
       end
 
-      def build_language(file_data, language_data, key, language, time)
+      def build_language(file_data, language_data, key)
         (file_data[key] || {}).deep_dup.deep_merge(language_data[key] || {})
       end
 

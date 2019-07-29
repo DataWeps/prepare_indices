@@ -40,7 +40,6 @@ module PrepareIndices
             if exists_indices[language]
               { status: :exists }
             else
-              binding.pry
               build(client, params, index_for_update, mapping[language], language)
             end
         end
@@ -50,7 +49,9 @@ module PrepareIndices
         mapping.keys.each_with_object({}) do |mapping_key, mem|
           alias_to_check = find_alias_to_check(
             index_for_update, mapping_key, params, mapping[mapping_key][:aliases])
-          mem[mapping_key] = Requests.exists_index?(es: client, index: alias_to_check)
+          exists_index     = Requests.exists_index?(es: client, index: alias_to_check)
+          exists_alias     = Requests.exists_alias?(es: client, index: alias_to_check)
+          mem[mapping_key] = exists_index || exists_alias
         end
       end
 
@@ -131,7 +132,7 @@ module PrepareIndices
             params.include?(key) && params[key].to_s =~ /true|yes|y|1|ano/ ? true : false
         end
         params[:languages].uniq!
-        params[:time] = params[:time].to_sym if params.include?(:time)
+        params[:time] = params[:time] if params.include?(:time)
         params
       end
     end
