@@ -4,8 +4,6 @@ require 'active_support/core_ext/time/calculations'
 
 require 'prepare_indices/create_indices'
 
-require 'pry'
-
 module PrepareIndices
   module RotationIndex
     class << self
