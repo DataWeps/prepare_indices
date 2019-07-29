@@ -1,0 +1,60 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "sk": {
+              "type": "text",
+              "analyzer": "czech"
+            },
+            "sk_case_sensitive": {
+              "type": "text",
+              "analyzer": "czech_case_sensitive"
+            }
+          },
+          "analyzer": "czech"
+        },
+        "content": {
+          "fields": {
+            "sk": {
+              "type": "text",
+              "analyzer": "czech"
+            },
+            "sk_case_sensitive": {
+              "type": "text",
+              "analyzer": "czech_case_sensitive"
+            }
+          },
+          "analyzer": "czech"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "czech_stop": {
+            "type": "stop",
+            "stopwords": "_czech_"
+          },
+          "czech_stemmer": {
+            "type": "stemmer",
+            "language": "czech"
+          }
+        },
+        "analyzer": {
+          "czech_case_sensitive": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": [
+              "czech_stop",
+              "czech_stemmer"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

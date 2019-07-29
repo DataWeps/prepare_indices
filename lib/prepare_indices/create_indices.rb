@@ -1,5 +1,11 @@
+require 'prepare_indices/mappings'
+require 'prepare_indices/requests'
+
+require 'prepare_indices/what_time'
 
 module PrepareIndices
+  class CreateIndicesError < StandardError; end
+
   module CreateIndices
     class << self
       def perform(params)
@@ -10,12 +16,56 @@ module PrepareIndices
     private
 
       def start(params)
-        client = Elasticsearch::Client.new(
-          host: params[:es],
-          log: params[:log] =~ /(true|yes|y|1|ano)/ ? true : false)
-        index = params[:index]
-        index_for_update = params[:force_index] || params[:index]
-        mapping = Requests.load_mappings(file: params[:file], index: params[:name] || index)
+        client = Elasticsearch::Client.new(params[:connect].merge(
+          params.include?(:logger) ? { logger: params[:logger] } : {}))
+        index                = params[:index]
+        index_for_update     = params[:force_index] || params[:index]
+        params[:languages] ||= []
+        params[:languages]   = %w[base] if params[:languages].blank?
+
+        mapping = Mappings.load_mappings(
+          file:      params[:file],
+          index:     params[:name] || index,
+          languages: params[:languages],
+          base_file: params[:base_file],
+          time:      params[:time],
+          merge:     params[:merge])
+
+        return mapping if mapping.include?(:errors)
+
+        exists_indices = check_exists_indices(index_for_update, client, params, mapping)
+
+        mapping.each_key.each_with_object({}) do |language, mem|
+          mem[language] = \
+            if exists_indices[language]
+              { status: :exists }
+            else
+              build(client, params, index_for_update, mapping[language], language)
+            end
+        end
+      end
+
+      def check_exists_indices(index_for_update, client, params, mapping)
+        mapping.keys.each_with_object({}) do |mapping_key, mem|
+          alias_to_check = find_alias_to_check(
+            index_for_update, mapping_key, params, mapping[mapping_key][:aliases])
+          exists_index     = Requests.exists_index?(es: client, index: alias_to_check)
+          exists_alias     = Requests.exists_alias?(es: client, index: alias_to_check)
+          mem[mapping_key] = exists_index || exists_alias
+        end
+      end
+
+      def find_alias_to_check(index_for_update, mapping_key, params, aliases)
+        if params[:rotation_check] == :date
+          "#{index_for_update}_#{WhatTime.what_time(params[:time])}"
+        elsif params[:rotation_check] == :language_date
+          "#{index_for_update}_#{mapping_key}_#{WhatTime.what_time(params[:time])}"
+        else
+          index_for_update
+        end
+      end
+
+      def build(client, params, index_for_update, mapping, language)
         index_type = params[:type]
         err = {}
         if params[:delete]
@@ -29,6 +79,7 @@ module PrepareIndices
             settings: mapping[:settings] || {},
             mappings: mapping[:mappings])
           Base.merge_errors!(err, response)
+          raise(CreateIndicesError, err) unless response[:index]
           index_for_update = response[:index]
         end
         if params[:settings] && !params[:create]
@@ -57,19 +108,31 @@ module PrepareIndices
           Base.merge_errors!(err, response)
         end
         if err[:errors]
-          { status: :error, errors: err, index: index_for_update }
+          raise(CreateIndicesError)
         else
-          { status: :ok, index: index_for_update }
+          { status: :created, index: index_for_update, language: language }
         end
+      rescue CreateIndicesError
+        { status: :error, errors: err, index: index_for_update, language: language }
       end
 
       def check_params!(params)
-        [:es, :file, :index, :type].each do |key|
+        %i[connect index].each do |key|
           raise(ArgumentError, "Missing params key #{key}") unless params.key?(key)
         end
-        [:mappings, :settings, :aliases, :create, :delete].each do |key|
+        %i[mappings settings aliases create delete].each do |key|
           params[key] = false unless params.include?(key)
         end
+        %i[base_file].each do |key|
+          params[key] = true unless params.include?(key)
+        end
+        %i[log base_file mappings settings force_index
+           close aliases create delete].each do |key|
+          params[key] = \
+            params.include?(key) && params[key].to_s =~ /true|yes|y|1|ano/ ? true : false
+        end
+        params[:languages].uniq!
+        params[:time] = params[:time] if params.include?(:time)
         params
       end
     end

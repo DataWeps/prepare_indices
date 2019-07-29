@@ -1,0 +1,181 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "content": {
+          "fields": {
+            "asciifolding": {
+              "type": "text",
+              "analyzer": "asciifolding"
+            },
+            "whitespace_exact": {
+              "type": "text",
+              "analyzer": "whitespace_exact"
+            },
+            "whitespace_exact_case_sensitive": {
+              "type": "text",
+              "analyzer": "whitespace_exact_case_sensitive"
+            },
+            "%language%_case_sensitive": {
+              "type": "text",
+              "analyzer": "%country%_case_sensitive"
+            },
+            "%language%": {
+              "type": "text",
+              "analyzer": "%country%"
+            }
+          },
+          "analyzer": "%country%",
+          "type": "text"
+        },
+        "title": {
+          "fields": {
+            "asciifolding": {
+              "type": "text",
+              "analyzer": "asciifolding"
+            },
+            "whitespace_exact": {
+              "type": "text",
+              "analyzer": "whitespace_exact"
+            },
+            "whitespace_exact_case_sensitive": {
+              "type": "text",
+              "analyzer": "whitespace_exact_case_sensitive"
+            },
+            "%language%_case_sensitive": {
+              "type": "text",
+              "analyzer": "%country%_case_sensitive"
+            },
+            "%language%": {
+              "type": "text",
+              "analyzer": "%country%"
+            }
+          },
+          "analyzer": "%country%",
+          "type": "text"
+        },
+        "search_author": {
+          "properties": {
+            "author": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "author_hash": {
+              "type": "keyword"
+            },
+            "name": {
+              "type": "text",
+              "fields": {
+                "author": {
+                  "type": "text",
+                  "boost": 10,
+                  "analyzer": "simple"
+                },
+                "exact": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "tag_mention": {
+          "properties": {
+            "search_id": {
+              "type": "keyword"
+            },
+            "name": {
+              "type": "keyword",
+              "index": false
+            },
+            "id": {
+              "type": "keyword",
+              "index": false
+            },
+            "shared": {
+              "type": "boolean",
+              "index": false
+            },
+            "tag_for": {
+              "type": "keyword",
+              "index": false
+            },
+            "user_id": {
+              "type": "long",
+              "index": false
+            },
+            "auto": {
+              "type": "boolean",
+              "index": false
+            }
+          }
+        },
+        "published_at": {
+          "type": "date",
+          "format": "dateOptionalTime"
+        },
+        "saved_at": {
+          "type": "date",
+          "format": "dateOptionalTime"
+        },
+        "updated_at": {
+          "type": "date",
+          "format": "dateOptionalTime"
+        },
+        "author": {
+          "type": "keyword",
+          "index": false
+        },
+        "countries": {
+          "type": "keyword"
+        },
+        "real_countries": {
+          "type": "keyword"
+        },
+        "lang": {
+          "type": "keyword"
+        },
+        "languages": {
+          "type": "keyword"
+        },
+        "source": {
+          "type": "keyword"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {},
+        "tokenizer": {
+          "standard_without_stopwords": {
+            "type": "standard"
+          }
+        },
+        "analyzer": {
+          "asciifolding": {
+            "tokenizer": "standard",
+            "filter": [
+              "asciifolding"
+            ]
+          },
+          "whitespace_exact": {
+            "type": "custom",
+            "tokenizer": "whitespace",
+            "filter": [
+              "lowercase"
+            ]
+          },
+          "whitespace_exact_case_sensitive": {
+            "type": "custom",
+            "tokenizer": "whitespace"
+          }
+        }
+      }
+    }
+  }
+}

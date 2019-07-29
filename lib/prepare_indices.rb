@@ -7,7 +7,6 @@ require 'prepare_indices/create_indices'
 require 'prepare_indices/rotation_index'
 
 module PrepareIndices
-  include Requests
   include CreateIndices
   include RotationIndex
 
@@ -35,3 +34,5 @@ module PrepareIndices
     end
   end
 end
+
+require_relative './jobs/rotation_index_job'

@@ -1,0 +1,59 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "lv": {
+              "type": "text",
+              "analyzer": "latvian"
+            },
+            "lv_case_sensitive": {
+              "type": "text",
+              "analyzer": "latvian_case_sensitive"
+            }
+          },
+          "analyzer": "latvian"
+        },
+        "content": {
+          "fields": {
+            "lv": {
+              "type": "text",
+              "analyzer": "latvian"
+            },
+            "lv_case_sensitive": {
+              "type": "text",
+              "analyzer": "latvian_case_sensitive"
+            }
+          },
+          "analyzer": "latvian"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "latvian_stemmer": {
+            "type": "stemmer",
+            "language": "latvian"
+          },
+          "latvian_stop": {
+            "type": "stop",
+            "stopwords": "_latvian_"
+          }
+        },
+        "analyzer": {
+          "latvian_case_sensitive": {
+            "filter": [
+              "latvian_stop",
+              "latvian_stemmer"
+            ],
+            "tokenizer": "standard"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "ru": {
+              "type": "text",
+              "analyzer": "russian"
+            },
+            "ru_case_sensitive": {
+              "type": "text",
+              "analyzer": "russian_case_sensitive"
+            }
+          },
+          "analyzer": "russian"
+        },
+        "content": {
+          "fields": {
+            "ru": {
+              "type": "text",
+              "analyzer": "russian"
+            },
+            "ru_case_sensitive": {
+              "type": "text",
+              "analyzer": "russian_case_sensitive"
+            }
+          },
+          "analyzer": "russian"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "russian_stop": {
+            "type": "stop",
+            "stopwords": "_russian_"
+          },
+          "russian_stemmer": {
+            "type": "stemmer",
+            "language": "russian"
+          }
+        },
+        "analyzer": {
+          "russian_case_sensitive": {
+            "filter": [
+              "russian_stop",
+              "russian_stemmer"
+            ],
+            "tokenizer": "standard"
+          }
+        }
+      }
+    }
+  }
+}

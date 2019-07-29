@@ -1,0 +1,59 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "es": {
+              "type": "text",
+              "analyzer": "spanish"
+            },
+            "es_case_sensitive": {
+              "type": "text",
+              "analyzer": "spanish_case_sensitive"
+            }
+          },
+          "analyzer": "spanish"
+        },
+        "content": {
+          "fields": {
+            "es": {
+              "type": "text",
+              "analyzer": "spanish"
+            },
+            "es_case_sensitive": {
+              "type": "text",
+              "analyzer": "spanish_case_sensitive"
+            }
+          },
+          "analyzer": "spanish"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "spanish_stop": {
+            "type": "stop",
+            "stopwords": "_spanish_"
+          },
+          "spanish_stemmer": {
+            "type": "stemmer",
+            "language": "light_spanish"
+          }
+        },
+        "analyzer": {
+          "spanish_case_sensitive": {
+            "tokenizer": "standard",
+            "filter": [
+              "spanish_stop",
+              "spanish_stemmer"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "sr": {
+              "type": "text",
+              "analyzer": "serbian"
+            },
+            "sr_case_sensitive": {
+              "type": "text",
+              "analyzer": "serbian_case_sensitive"
+            }
+          },
+          "analyzer": "serbian"
+        },
+        "content": {
+          "fields": {
+            "sr": {
+              "type": "text",
+              "analyzer": "serbian"
+            },
+            "sr_case_sensitive": {
+              "type": "text",
+              "analyzer": "serbian_case_sensitive"
+            }
+          },
+          "analyzer": "serbian"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "serbian_lemmagen": {
+            "type": "lemmagen",
+            "lexicon": "sr"
+          }
+        },
+        "analyzer": {
+          "serbian_case_sensitive": {
+            "tokenizer": "standard",
+            "filter": [
+              "serbian_lemmagen"
+            ]
+          },
+          "serbian": {
+            "tokenizer": "standard",
+            "filter": [
+              "serbian_lemmagen",
+              "lowercase"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

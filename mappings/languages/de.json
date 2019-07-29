@@ -1,0 +1,59 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "de": {
+              "type": "text",
+              "analyzer": "german"
+            },
+            "de_case_sensitive": {
+              "type": "text",
+              "analyzer": "german_case_sensitive"
+            }
+          },
+          "analyzer": "german"
+        },
+        "content": {
+          "fields": {
+            "de": {
+              "type": "text",
+              "analyzer": "german"
+            },
+            "de_case_sensitive": {
+              "type": "text",
+              "analyzer": "german_case_sensitive"
+            }
+          },
+          "analyzer": "german"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {
+          "german_stop": {
+            "type": "stop",
+            "stopwords": "_german_"
+          },
+          "german_stemmer": {
+            "type": "stemmer",
+            "language": "light_german"
+          }
+        },
+        "analyzer": {
+          "german_case_sensitive": {
+            "tokenizer": "standard",
+            "filter": [
+              "german_stop",
+              "german_stemmer"
+            ]
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,18 +1,14 @@
 require 'json'
 
 module PrepareIndices
-  module Requests
+  class Requests
     class << self
-      def load_mappings(file:, index:)
-        open = JSON.parse(File.read(file))
-        raise ArgumentError, "Index #{index} is not in file" if \
-          !open.include?(index) ||
-          !open[index]['mappings']
-        { mappings: open[index]['mappings'],
-          settings: open[index]['settings'],
-          aliases: open[index]['aliases'] || {} }
-      rescue Errno::ENOENT => error
-        { errors: true, load_error: error }
+      def exists_alias?(es:, index:)
+        es.indices.exists_alias?(name: index)
+      end
+
+      def exists_index?(es:, index:)
+        es.indices.exists?(index: index)
       end
 
       def put_settings(es:, settings:, index:, type:, close_index: false)
@@ -42,6 +38,7 @@ module PrepareIndices
       end
 
       def create_index(es:, index:, settings:, mappings:)
+        sleep(1)
         index_name = "#{index}_#{Time.now.strftime('%Y%m%d%H%M%S')}"
         es.indices.create(
           index: index_name,
@@ -56,10 +53,9 @@ module PrepareIndices
       end
 
       def put_aliases(es:, index:, aliases:)
+        { errors: false } if index.blank?
         aliases.each do |a|
-          es.indices.put_alias(
-          index: index,
-          name: a)
+          es.indices.put_alias(index: index, name: a)
         end
         { errors: false }
       rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
