@@ -21,7 +21,7 @@ module PrepareIndices
             mem["#{type}_#{[ES[type][:connect][:host]].flatten[0]}_#{data_type}"] =
               PrepareIndices::RotationIndex.perform(params: params)
 
-            ES[type][:connect_another].each do |connect_another|
+            (ES[type][:connect_another] || []).each do |connect_another|
               params = ES[type].deep_dup.deep_merge(connect_another)
               params = params.deep_merge(params[:rotation][data_type]).deep_merge(explicit_params)
 

@@ -1,6 +1,7 @@
 {
   "mappings": {
     "document": {
+      "dynamic": "strict",
       "properties": {
         "content": {
           "fields": {
