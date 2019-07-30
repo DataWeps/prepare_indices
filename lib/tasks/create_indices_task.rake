@@ -10,7 +10,7 @@ namespace :prepare_indices do
 
       response[from_time] = PrepareIndices::RotationIndexJob.perform(
         ENV['type'].split(';'),
-        { "rotation": { "time": from_time.strftime('%Y-%m-%d') } })
+        { "rotation" => { "time" => from_time.strftime('%Y-%m-%d') } })
       from_time = from_time.months_since(1)
     end
   end
