@@ -1,6 +1,7 @@
 require 'active_support/core_ext/time/calculations'
 
 namespace :prepare_indices do
+  # bundle exec rake prepare_indices:create_indices es='https://localhost:9202' from_time='2019-08-01' to_time='2019-08-01' type='disputatio'
   task :create_indices do
     response = {}
     from_time = Time.parse(ENV['from_time'])
