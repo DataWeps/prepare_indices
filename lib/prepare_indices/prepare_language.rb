@@ -14,7 +14,9 @@ module PrepareIndices
       'lv' => { language: 'lv', country: 'latvian' },
       'mk' => { language: 'mk', country: 'macedonian' },
       'ru' => { language: 'ru', country: 'russian' },
-      'sr' => { language: 'sr', country: 'serbian' } }.freeze
+      'sr' => { language: 'sr', country: 'serbian' },
+      'bs' => { language: 'bs', country: 'serbian' },
+      'hr' => { language: 'hr', country: 'serbian' } }.freeze
 
     class << self
       # gsub wildcards with actual language/counry

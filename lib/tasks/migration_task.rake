@@ -11,6 +11,7 @@ namespace :prepare_indices do
       index_to_update: ENV['index_to_update'],
       type: ENV['type'] || nil,
       from: ENV['from'],
-      to:   ENV['to'])
+      to:   ENV['to'],
+      method: (ENV['method'] || 'mappings').to_sym)
   end
 end

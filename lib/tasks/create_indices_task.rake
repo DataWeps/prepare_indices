@@ -14,5 +14,6 @@ namespace :prepare_indices do
         { "rotation" => { "time" => from_time.strftime('%Y-%m-%d') } })
       from_time = from_time.months_since(1)
     end
+    puts "#{response}"
   end
 end
