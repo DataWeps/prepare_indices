@@ -15,18 +15,27 @@ module PrepareIndices
           !file_data.include?(index) ||
           !file_data[index]['mappings']
 
-        build_mappings(
+        mappings = build_mappings(
           base_data,
           file_data[index],
           find_languages(index, languages),
           languages,
           time,
           merge)
-      rescue Errno::ENOENT => error
-        { errors: true, load_error: error }
+        delete_keys!(mappings)
+        mappings
+      rescue Errno::ENOENT => e
+        { errors: true, load_error: e }
       end
 
     private
+
+      def delete_keys!(mappings)
+        mappings.each do |key, value|
+          delete_keys!(value)  if value.is_a?(Hash)
+          mappings.delete(key) if value.is_a?(String) && value == 'delete'
+        end
+      end
 
       def load_base_data(index, base_file)
         if base_file
