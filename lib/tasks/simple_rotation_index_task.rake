@@ -1,7 +1,7 @@
 namespace :prepare_indices do
-  task :rotation_index do
+  task :simple_rotation_index do
     params = Oj.load(ENV['params'] || '{}')
-    puts PrepareIndices::RotationIndexJob.perform(
+    puts PrepareIndices::SimpleRotationIndexJob.new.perform(
       ENV['type'].split(';'),
       params).inspect
   end

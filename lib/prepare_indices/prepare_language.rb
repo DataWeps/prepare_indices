@@ -1,4 +1,5 @@
 require_relative 'what_time'
+require 'oj'
 
 module PrepareIndices
   class PrepareLanguage
@@ -43,10 +44,11 @@ module PrepareIndices
       end
 
       def prepare_language_mapping(data, language)
-        # return data if language == 'base'
+        return data if language == 'base'
+
         data = Oj.dump(data)
-        data = data.gsub("%language%", LANGUAGES[language][:language])
-        data = data.gsub("%country%",  LANGUAGES[language][:country])
+        data = data.gsub("%language%", LANGUAGES.include?(language) ? LANGUAGES[language][:language] : language)
+        data = data.gsub("%country%",  LANGUAGES.include?(language) ? LANGUAGES[language][:country] : language)
         Oj.load(data)
       end
     end

@@ -8,7 +8,7 @@ module PrepareIndices
   class Mappings
     class << self
       # time: :this_month|:next_month
-      def load_mappings(file:, index:, languages: nil, time: :this_month, base_file: true, merge: false)
+      def load_mappings(file:, index:, languages: nil, time: :this_month, base_file: true, merge: false, required: true)
         base_data = load_base_data(index, base_file)
         file_data = find_file(file, index, 'base', false)
         raise(ArgumentError, "Index #{index} is not in file") if \
@@ -18,7 +18,7 @@ module PrepareIndices
         mappings = build_mappings(
           base_data,
           file_data[index],
-          find_languages(index, languages),
+          find_languages(index, languages, required),
           languages,
           time,
           merge)
@@ -76,9 +76,9 @@ module PrepareIndices
         (file_data[key] || {}).deep_dup.deep_merge(language_data[key] || {})
       end
 
-      def find_languages(index, languages)
+      def find_languages(index, languages, required = true)
         languages.each_with_object({}) do |language, mem|
-          mem[language] = find_file(nil, language.to_s, 'languages', true, true)
+          mem[language] = find_file(nil, language.to_s, 'languages', true, required)
           mem[language].deep_merge!(
             find_file(nil, "#{index}_#{language}", 'languages', false, false))
         end
@@ -86,11 +86,13 @@ module PrepareIndices
 
       def find_file(file, index, tail = 'base', gem_file = true, required = true)
         return {} if index == 'base'
-        file_dir = file ? file : base_file(index, tail, gem_file)
+
+        file_dir = file || base_file(index, tail, gem_file)
         puts File.expand_path(file_dir).to_s
         JSON.parse(File.read(file_dir))
       rescue Errno::ENOENT => error
         raise(Errno::ENOENT, error.message) if required
+
         {}
       end
 
