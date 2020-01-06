@@ -11,7 +11,8 @@ module PrepareIndices
       # node|mention:
       #   rotate: Boolean
       def perform(params:)
-        raise(ArgumentError, "Missing ES instatnce") if params[:connect].blank?
+        raise(ArgumentError, "Missing ES instance") if params[:connect].blank?
+
         check_params!(params)
         @time = Time.now
 
@@ -20,6 +21,7 @@ module PrepareIndices
 
       def rotate_index(params)
         return true unless rotate_index?(params)
+
         response =
           case params[:every]
             when :month
@@ -39,11 +41,13 @@ module PrepareIndices
 
       def rotate_month(params)
         CreateIndices.perform(params)
-      rescue Elasticsearch::Transport::Transport::Errors, StandardError => error
-        { error: error.message, backtrace: error.backtrace }
+      rescue Elasticsearch::Transport::Transport::Errors, StandardError => e
+        { error: e.message, backtrace: e.backtrace }
       end
 
       def check_params!(params)
+        params.deep_symbolize_keys!
+
         if params.blank?
           params = { rotate: false }
           return params
@@ -54,6 +58,7 @@ module PrepareIndices
         # raise(ArgumentError, "Missing type: '#{params}") if missing_type?(params)
         %i[mappings settings create].each do |key|
           next if params.include?(key)
+
           params[key] = true
         end
         params[:close]     = false       unless params.include?(:close)
@@ -80,16 +85,19 @@ module PrepareIndices
 
       def exist_file?(params)
         return false unless File.exist?(params[:file])
+
         true
       end
 
       def missing_type?(params)
         return true if params[:type].blank?
+
         false
       end
 
       def missing_file?(params)
         return true if params[:file].blank?
+
         false
       end
     end

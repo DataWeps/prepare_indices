@@ -36,3 +36,4 @@ module PrepareIndices
 end
 
 require_relative './jobs/rotation_index_job'
+require_relative './jobs/simple_rotation_index_job'

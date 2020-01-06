@@ -30,7 +30,8 @@ module PrepareIndices
           languages: params[:languages],
           base_file: params[:base_file],
           time:      params[:time],
-          merge:     params[:merge])
+          merge:     params[:merge],
+          required:  params[:required])
 
         return mapping if mapping.include?(:errors)
 
@@ -124,7 +125,7 @@ module PrepareIndices
         %i[mappings settings aliases create delete].each do |key|
           params[key] = false unless params.include?(key)
         end
-        %i[base_file].each do |key|
+        %i[base_file required].each do |key|
           params[key] = true unless params.include?(key)
         end
         %i[log base_file mappings settings force_index
@@ -132,7 +133,7 @@ module PrepareIndices
           params[key] = \
             params.include?(key) && params[key].to_s =~ /true|yes|y|1|ano/ ? true : false
         end
-        params[:languages].uniq!
+        params[:languages].uniq! unless params[:languages].blank?
         params[:time] = params[:time] if params.include?(:time)
         params
       end
