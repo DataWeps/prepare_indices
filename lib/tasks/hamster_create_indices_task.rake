@@ -8,7 +8,7 @@ namespace :prepare_indices do
       connect: { log: true, host: ENV['es'] },
       rotation: ES[ENV['type'].to_sym][:rotation] || {},
       rotation_check: (ENV['rotation_check'] || '').to_sym,
-      index: ES[ENV['type'].to_sym][:index],
+      index: ENV['index'],
       languages: ENV['languages'].split(';'),
       base_file: false,
       name: ENV['type'],
