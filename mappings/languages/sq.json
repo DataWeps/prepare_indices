@@ -1,0 +1,54 @@
+{
+  "mappings": {
+    "document": {
+      "properties": {
+        "title": {
+          "fields": {
+            "sq": {
+              "type": "text",
+              "analyzer": "albanian"
+            },
+            "sq_case_sensitive": {
+              "type": "text",
+              "analyzer": "albanian_case_sensitive"
+            }
+          },
+          "analyzer": "albanian"
+        },
+        "content": {
+          "fields": {
+            "sq": {
+              "type": "text",
+              "analyzer": "albanian"
+            },
+            "sq_case_sensitive": {
+              "type": "text",
+              "analyzer": "albanian_case_sensitive"
+            }
+          },
+          "analyzer": "albanian"
+        }
+      }
+    }
+  },
+  "settings": {
+    "index": {
+      "analysis": {
+        "filter": {}
+        },
+        "analyzer": {
+          "albanian_case_sensitive": {
+            "type": "custom",
+            "tokenizer": "standard",
+            "filter": []
+          },
+          "albanian": {
+            "tokenizer": "standard",
+            "filter": [
+              "lowercase"
+            ]
+          }
+        }
+    }
+  }
+}
