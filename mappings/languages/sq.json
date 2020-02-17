@@ -34,8 +34,7 @@
   "settings": {
     "index": {
       "analysis": {
-        "filter": {}
-        },
+        "filter": {},
         "analyzer": {
           "albanian_case_sensitive": {
             "type": "custom",
@@ -43,12 +42,14 @@
             "filter": []
           },
           "albanian": {
+            "type": "custom",
             "tokenizer": "standard",
             "filter": [
               "lowercase"
             ]
           }
         }
+      }
     }
   }
 }

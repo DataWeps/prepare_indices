@@ -4,7 +4,7 @@ require 'oj'
 
 namespace :prepare_indices do
   # bundle exec rake prepare_indices:create_indices explicit_params='{ "connect": { "host": "http://localhost:9202" } }' from_time='2019-08-01' to_time='2019-08-01' type='disputatio'
-  # bundle exec rake prepare_indices:create_indices explicit_params='{ "connect": { "host": "https://localhost:9202", "ssl": { "verify": false } } }' from_time='2019-08-01' to_time='2019-08-01' type='disputatio'
+  # bundle exec rake prepare_indices:create_indices explicit_params='{ "connect": { "host": "https://localhost:9202", "transport_options": { ssl": { "verify": false } } } }' from_time='2019-08-01' to_time='2019-08-01' type='disputatio'
   task :create_indices do
     response = {}
     from_time = Time.parse(ENV['from_time'])
