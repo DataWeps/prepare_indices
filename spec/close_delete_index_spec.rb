@@ -4,9 +4,11 @@ require 'active_support/core_ext/hash/deep_merge.rb'
 require 'active_support/core_ext/object/blank'
 require 'active_support/core_ext/time/calculations'
 
-require 'prepare_indices/close_index'
+require 'prepare_indices/close_delete_index'
 
-describe PrepareIndices::CloseIndex do
+describe PrepareIndices::CloseDeleteIndex do
+  subject(:response) { described_class.perform(params: args) }
+
   let(:month) { Time.now.next_month.strftime('%Y%m') }
   let(:ok_response){ JSON.dump('acknowledged' => true) }
   let(:es_host) { { host: 'localhost:9200', log: true } }
@@ -20,9 +22,8 @@ describe PrepareIndices::CloseIndex do
   end
 
   describe 'wrong params' do
+    let(:args) { {} }
     context 'raise error with wrong params' do
-      subject(:response) { PrepareIndices::RotationIndex.perform(params: {}) }
-
       it 'should has raise exception' do
         expect { response }.to raise_error(ArgumentError, /missing es/i)
       end
@@ -30,14 +31,11 @@ describe PrepareIndices::CloseIndex do
   end
 
   describe '#perform' do
-    subject { described_class.perform(params: args) }
-
     context 'close_older_indices is false' do
       let(:args) { { close_older_indices: false, connect: es_host } }
-      it { is_expected.to be(nil) }
+      it { is_expected.to eq({}) }
 
       it 'not call elasticsearch' do
-        subject
         expect(WebMock).not_to have_requested(:any, /#{es_host[:host]}/)
       end
     end
@@ -68,8 +66,8 @@ describe PrepareIndices::CloseIndex do
               'article_index_2' => { 'aliases' =>
                 ["article_index_#{Time.now.months_ago(2).strftime('%Y%m')}"] },
               'article_index_3' => { 'aliases' =>
-                ["article_index_#{Time.now.months_ago(3).strftime('%Y%m')}"] }
-            } ))
+                ["article_index_#{Time.now.months_ago(3).strftime('%Y%m')}"] } }
+            ))
         stub_request(:post,  /_close/).to_return(body: ok_response)
       end
 
@@ -82,11 +80,11 @@ describe PrepareIndices::CloseIndex do
       it 'ignore ok indices' do
         subject
         expect(WebMock).not_to have_requested(
-          :any, %r{#{es_host[:host]}/article_index_(?:1|2)\z})
+          :any, %r{#{es_host[:host]}/article_index_(?:1|2|4)\z})
       end
 
       it 'contains array of deleted indices' do
-        expect(subject[:response]).to eq(['article_index_3'])
+        expect(subject[:closed]).to eq(['article_index_3'])
       end
 
       it 'has set status to true' do
