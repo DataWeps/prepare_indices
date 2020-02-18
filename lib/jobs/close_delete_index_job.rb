@@ -1,3 +1,5 @@
+require 'prepare_indices/close_delete_index'
+
 module PrepareIndices
   class CloseDeleteIndexJob < CommonRotationJob
     class << self
