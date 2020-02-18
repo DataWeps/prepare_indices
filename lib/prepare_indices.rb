@@ -38,3 +38,4 @@ end
 
 require_relative './jobs/rotation_index_job'
 require_relative './jobs/simple_rotation_index_job'
+require_relative './jobs/close_delete_index_job'

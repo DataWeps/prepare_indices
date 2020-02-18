@@ -87,7 +87,7 @@ module PrepareIndices
         if params[:settings] && !params[:create]
           response = Requests.put_settings(
             es: client,
-            close_index: params[:close_index],
+            if_close_index: params[:close_index],
             settings: mapping[:settings] || {},
             index: index_for_update,
           type: index_type)
@@ -99,7 +99,7 @@ module PrepareIndices
             mappings: mapping[:mappings],
             index: index_for_update,
             type: index_type,
-            close_index: params[:close_index])
+            if_close_index: params[:close_index])
           Base.merge_errors!(err, response)
         end
         if params[:aliases]
