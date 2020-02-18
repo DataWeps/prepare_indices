@@ -80,7 +80,9 @@ module PrepareIndices
       end
 
       def find_indices_older_than(type)
-        indices = Requests.find_index(es: client, name: compute_name(type))
+        indices = Requests.find_alias(es: client, index: compute_name(type))
+        return [] if indices['status'] && indices['status'] == 404
+
         indices.delete_if { |_index_name, data| include_newer_alias?(type, data) }
         indices
       end
@@ -90,9 +92,15 @@ module PrepareIndices
       end
 
       def compute_date(key, older_than = true)
-        compute_key = key == :close ? :close_older_than : :delete_older_than
-        Time.now.beginning_of_month.months_ago(
-          @params[compute_key] + (older_than ? 1 : 0))
+        if key == :close && @params[:close_date].present?
+          @params[:close_date]
+        elsif key == :delete && @params[:delete_date].present?
+          @params[:delete_date]
+        else
+          compute_key = key == :close ? :close_older_than : :delete_older_than
+          Time.now.beginning_of_month.months_ago(
+            @params[compute_key] + (older_than ? 1 : 0))
+        end
       end
 
       def compute_name(type)
@@ -106,6 +114,8 @@ module PrepareIndices
         raise(ArgumentError, 'Missing ES instance') if params[:connect].blank?
 
         params[:close_older_indices] = false unless params.include?(:close_older_indices)
+        params[:close_date] = Time.parse(params[:close_date]) if params[:close_date]
+        params[:delete_date] = Time.parse(params[:delete_date]) if params[:delete_date]
         params[:delete_older_indices] = false unless params.include?(:delete_older_indices)
         params[:close_older_than] = CLOSE_OLDER_THAN unless params.include?(:close_older_than)
         params[:delete_older_than] = DELETE_OLDER_THAN unless params.include?(:delete_older_than)

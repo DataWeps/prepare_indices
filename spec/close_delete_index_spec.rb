@@ -91,5 +91,34 @@ describe PrepareIndices::CloseDeleteIndex do
         expect(subject[:status]).to be(true)
       end
     end
+
+    context 'close_date' do
+      let(:args) { { close_date: '2017-01-01', close_older_indices: true, connect: es_host, index: 'article_index' } }
+
+      before do
+        stub_request(:get, %r{#{es_host[:host]}/article_index_}).to_return(
+          status: 200,
+          headers: { content_type: :json },
+          body: JSON.dump(
+            { 'article_index_1' => { 'aliases' =>
+                ['article_index_201701'] },
+              'article_index_2' => { 'aliases' =>
+                ['article_index_201702'] } }
+            ))
+        stub_request(:post,  /_close/).to_return(body: ok_response)
+      end
+
+      it 'delete right index' do
+        subject
+        expect(WebMock).to have_requested(
+          :post, %r{#{es_host[:host]}/article_index_1/_close})
+      end
+
+      it 'ignore ok indices' do
+        subject
+        expect(WebMock).not_to have_requested(
+          :any, %r{#{es_host[:host]}/article_index_2\z})
+      end
+    end
   end
 end

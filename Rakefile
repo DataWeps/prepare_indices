@@ -1,5 +1,6 @@
-require "bundler/gem_tasks"
-import './lib/tasks/migration_task.rake'
-import './lib/tasks/prepare_indices_task.rake'
+require 'bundler/gem_tasks'
+DIR['./lib/tasks/*.rake'].each do |file|
+  import(file)
+end
 
 task :default => :spec

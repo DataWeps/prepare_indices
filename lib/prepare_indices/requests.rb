@@ -41,7 +41,7 @@ module PrepareIndices
             body: {
               settings: settings,
               mappings: mappings })
-          { errors: false, index: index_name }
+          { index: index_name }
         end
       end
 
@@ -59,23 +59,32 @@ module PrepareIndices
         es.indices.delete(index: index) if es.indices.exists?(index: index)
       end
 
-      def find_index(es:, name:)
-        es.indices.get(index: name)
+      def find_index(es:, index:)
+        safe_request do
+          es.indices.get(index: index, allow_no_indices: true)
+        end
+      end
+
+      def find_alias(es:, index:)
+        safe_request do
+          es.indices.get_alias(index: index, ignore: 404)
+        end
       end
 
       def close_index(es:, index:, if_close_index: false)
-        es.indices.close(index: index) if if_close_index
+        safe_request do
+          es.indices.close(index: index) if if_close_index
+        end
       end
 
       private
 
       def safe_request
-        response = yield
-        { errors: false }.merge(response || {})
-      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => error
-        { errors: true, error: error }
-      rescue Elasticsearch::Transport::Transport::Errors::NotFound => error
-        { errors: true, error: error }
+        yield
+      rescue Elasticsearch::Transport::Transport::Errors::BadRequest => e
+        { errors: true, error: e }
+      rescue Elasticsearch::Transport::Transport::Errors::NotFound => e
+        { errors: true, error: e }
       end
     end
   end

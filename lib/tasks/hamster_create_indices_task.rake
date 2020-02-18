@@ -1,7 +1,7 @@
 require 'active_support/core_ext/time/calculations'
 
 namespace :prepare_indices do
-  # bundle exec rake prepare_indices:hamster_create_indices es='http://localhost:9201' from_time='2020-02-01' to_time='2020-02-02 type='hamster_logger' languages='heureka_cz' rotation_check=date index='tl_hamster_logger_heureka_cz'
+  # bundle exec rake prepare_indices:hamster_create_indices es='http://localhost:9201' time='2020-02-01' type='hamster_logger' languages='heureka_cz' rotation_check=date index='tl_hamster_logger_heureka_cz'
 
   task :hamster_create_indices do
     params = {
