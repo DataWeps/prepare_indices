@@ -21,7 +21,7 @@ module PrepareIndices
             (ES[type][:connect_another] || []).each do |connect_another|
               mem[output_name(connect_another, type, data_type)] =
                 call_rotation_job(
-                  create_params(type, params, data_type, connect_another))
+                  create_params(type, params, data_type, connect_another, explicit_params))
             end
           end
         end
@@ -39,7 +39,7 @@ module PrepareIndices
         "#{type}_#{[connect[:connect][:host]].flatten[0]}_#{data_type}"
       end
 
-      def create_params(type, params, data_type, connect_another)
+      def create_params(type, params, data_type, connect_another, explicit_params)
         created_params = ES[type].deep_dup.deep_merge(connect_another)
         created_params.deep_merge!(params[:rotation][data_type]).deep_merge(
           explicit_params)
