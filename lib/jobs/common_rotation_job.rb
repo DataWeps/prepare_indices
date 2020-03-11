@@ -40,9 +40,14 @@ module PrepareIndices
       end
 
       def create_params(type, params, data_type, connect_another, explicit_params)
+        # create params from default params and merge them with connect_another params
         created_params = ES[type].deep_dup.deep_merge(connect_another)
-        created_params.deep_merge!(params[:rotation][data_type]).deep_merge(
+        # populate rotation params into params
+        created_params.deep_merge!(created_params[:rotation][data_type]).deep_merge!(
           explicit_params)
+        # in case of existing :languages_write param, override :languages with them
+        created_params[:languages] = created_params[:languages_write] if \
+          created_params[:languages_write].present?
         created_params
       end
 
